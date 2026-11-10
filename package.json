@@ -1,9 +1,9 @@
 {
-  "name": "ooks",
+  "name": "bookiin",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
-  "description": "Ooks - lector de libros y manga",
+  "description": "Bookiin - lector de escritorio para libros, manga y webtoons",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -12,10 +12,12 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
+    "fflate": "^0.8.3",
     "pdfjs-dist": "^6.5.438"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",
     "vite": "^5"
-  }
+  },
+  "author": "Tomika"
 }

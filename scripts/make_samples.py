@@ -8,6 +8,9 @@ def esc(s):
 def para(text, width=78):
     return textwrap.wrap(" ".join(text.split()), width)
 
+OUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public", "books")
+
+
 def make_pdf(path, title, author, pages):
     objs = []
     objs.append(b"<< /Type /Catalog /Pages 2 0 R >>")
@@ -15,7 +18,6 @@ def make_pdf(path, title, author, pages):
     objs.append(("<< /Type /Pages /Kids [%s] /Count %d >>" % (kids, len(pages))).encode())
     objs.append(b"<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman /Encoding /WinAnsiEncoding >>")
     objs.append(b"<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic /Encoding /WinAnsiEncoding >>")
-    n_content = len(pages)
     for i, lines in enumerate(pages):
         content = "BT /F2 20 Tf 60 760 Td (%s) Tj ET\n" % esc(title)
         content += "BT /F2 12 Tf 60 742 Td (%s) Tj ET\n" % esc(author)
@@ -28,7 +30,7 @@ def make_pdf(path, title, author, pages):
         data = zlib.compress(content.encode("latin-1", errors="replace"))
         objs.append(b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] "
                     b"/Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents %d 0 R >>"
-                    % (5 + n_content + i))
+                    % (6 + 2 * i))  # cada pagina (5+2i) va seguida de su stream (6+2i)
         objs.append(b"<< /Length %d /Filter /FlateDecode >>\nstream\n" % len(data) + data + b"\nendstream")
     out = b"%PDF-1.4\n"
     offs = []
@@ -41,6 +43,7 @@ def make_pdf(path, title, author, pages):
     for off in offs:
         out += ("%010d 00000 n \n" % off).encode()
     out += b"trailer\n<< /Size %d /Root 1 0 R >>\nstartxref\n%d\n%%%%EOF" % (len(objs) + 1, xref)
+    path = os.path.join(OUT_DIR, path)
     open(path, "wb").write(out)
     print(path, os.path.getsize(path), "bytes,", len(pages), "paginas")
 

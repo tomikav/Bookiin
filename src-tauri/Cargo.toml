@@ -1,12 +1,12 @@
 [package]
-name = "ooks"
-version = "0.1.0"
-description = "Ooks - lector de libros y manga"
+name = "bookiin"
+version = "1.0.0"
+description = "Bookiin - lector de libros, manga y webtoons"
 authors = ["Tomika"]
 edition = "2021"
 
 [lib]
-name = "ooks_lib"
+name = "bookiin_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

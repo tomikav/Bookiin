@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
   <title>Bookiin</title>
 </head>
 <body>
@@ -22,7 +24,7 @@
 
     <nav class="nav">
       <span class="lbl">Colección</span>
-      <a href="#" class="active">
+      <a href="#" class="active" data-nav="all">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H10a2 2 0 0 1 2 2v13a1.5 1.5 0 0 0-1.5-1.5H4Z"/><path d="M20 5.5C20 4.7 19.3 4 18.5 4H14a2 2 0 0 0-2 2v13a1.5 1.5 0 0 1 1.5-1.5H20Z"/></svg>
         Biblioteca <span class="count" id="navcount">—</span>
       </a>
@@ -30,23 +32,37 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2.5"/></svg>
         Continuar leyendo
       </a>
-      <a href="#" id="navadded">
+      <a href="#" data-nav="added">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 4h11l3 3v13H5z"/><path d="M9 9h6M9 13h6"/></svg>
         Añadidos hace poco
       </a>
-      <span class="lbl" style="margin-top:20px">Estantes</span>
-      <a href="#" data-kind="manga">
+      <span class="lbl" style="margin-top:20px">Géneros</span>
+      <a href="#" data-nav="kind:manga" data-kind="manga">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19V6a2 2 0 0 1 2-2h8l6 6v9"/><path d="M14 4v6h6"/></svg>
-        Manga &amp; cómic
+        Manga y cómic <span class="count"></span>
       </a>
-      <a href="#" data-kind="novela">
+      <a href="#" data-nav="kind:novela" data-kind="novela">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
-        Novelas
+        Novelas <span class="count"></span>
       </a>
-      <a href="#" data-kind="libre">
+      <a href="#" data-nav="kind:poesía" data-kind="poesía">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 19c6-1 11-6 14-15-7 2-12 7-14 15Z"/><path d="M5 19 12 12"/></svg>
+        Poesía <span class="count"></span>
+      </a>
+      <a href="#" data-nav="kind:ensayo" data-kind="ensayo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 4h9l3 3v13H6z"/><path d="M9 11h6M9 15h4"/></svg>
+        Ensayo <span class="count"></span>
+      </a>
+      <a href="#" data-nav="kind:libre" data-kind="libre">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg>
-        Sin clasificar
+        Sin clasificar <span class="count"></span>
       </a>
+      <span class="lbl lblrow" style="margin-top:20px">Estantes
+        <button class="newshelf" id="newshelf" title="Nuevo estante" aria-label="Nuevo estante">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+      </span>
+      <div class="shelflist" id="shelflist"></div>
     </nav>
 
     <div class="rail-foot">
@@ -62,16 +78,22 @@
   <main class="stage" id="stage">
     <header class="lib-head">
       <div class="title-row">
-        <h1 class="h1"><span class="sub">Tu colección · medianoche</span>Biblioteca</h1>
+        <h1 class="h1"><span class="sub" id="h1sub">Tu colección · medianoche</span><span id="h1title">Biblioteca</span></h1>
         <div class="toolbar">
-          <button class="addbtn" id="addbtn" title="Subir un PDF">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-            Añadir PDF
-          </button>
-          <input type="file" id="pdffile" accept="application/pdf" multiple hidden>
+          <div class="addgroup">
+            <button class="addbtn" id="addbtn" title="Añadir PDF, CBZ o imágenes">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Añadir
+            </button>
+            <button class="addbtn folder" id="addfolder" title="Añadir una carpeta de imágenes (manga, webtoon)" aria-label="Añadir carpeta">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M3.5 7.5a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/></svg>
+            </button>
+          </div>
+          <input type="file" id="pdffile" accept="application/pdf,.pdf,.cbz,.zip,image/*" multiple hidden>
+          <input type="file" id="folderinput" webkitdirectory multiple hidden>
           <label class="search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
-            <input id="search" type="text" placeholder="Buscar por título o autor…" autocomplete="off">
+            <input id="search" type="text" placeholder="Buscar título, autor o #etiqueta" autocomplete="off">
           </label>
           <div class="selectwrap">
             <select class="sort" id="sort">
@@ -121,6 +143,9 @@
           Vertical
         </button>
       </div>
+      <button class="icbtn" id="dirbtn" title="Sentido de lectura: derecha a izquierda (manga)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8H6M10 4 6 8l4 4"/><path d="M4 16h14M14 12l4 4-4 4"/></svg>
+      </button>
       <button class="icbtn" id="calmbtn" title="Modo papel (sepia)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 3a6 6 0 0 0-6 6c0 3 2 4.5 2 7h8c0-2.5 2-4 2-7a6 6 0 0 0-6-6Z"/><path d="M10 19h4M11 21.5h2"/></svg>
       </button>
@@ -137,7 +162,7 @@
   </div>
 
   <div class="hint" id="hint">
-    <span>Clic a los lados o</span> <kbd>←</kbd><kbd>→</kbd> <span>para pasar página</span>
+    <span id="hinttext">Clic a los lados o</span> <kbd>←</kbd><kbd>→</kbd> <span>para pasar página</span> <span class="sep"></span> <kbd>Z</kbd> <span>zen</span>
   </div>
 
   <div class="r-chrome r-bottom">
@@ -155,6 +180,15 @@
 </div>
 
 <!-- ================= EDIT DIALOG ================= -->
+<div class="dropveil" aria-hidden="true">
+  <div class="dropcard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M12 6.5C10 4.9 6.9 4.6 3.8 5.4v13.2c3.1-.8 6.2-.5 8.2 1.1M12 6.5c2-1.6 5.1-1.9 8.2-1.1v13.2c-3.1-.8-6.2-.5-8.2 1.1M12 6.5v13.2"/></svg>
+    <b>Suelta para añadir a la biblioteca</b>
+    <span>PDF, CBZ o carpetas de imágenes. Todo se queda en tu equipo.</span>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <div class="modal" id="editmodal" aria-hidden="true">
   <div class="modal-card">
     <h2>Editar libro</h2>
@@ -174,6 +208,23 @@
     </div>
     <label class="frow">Título <input id="edittitle" type="text"></label>
     <label class="frow">Autor <input id="editauthor" type="text"></label>
+    <div class="frow2">
+      <label class="frow">Género
+        <span class="selectwrap">
+          <select class="sort" id="editkind">
+            <option value="novela">Novela</option>
+            <option value="poesía">Poesía</option>
+            <option value="ensayo">Ensayo</option>
+            <option value="manga">Manga</option>
+            <option value="webtoon">Webtoon</option>
+            <option value="pdf">Sin clasificar</option>
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+        </span>
+      </label>
+      <label class="frow">Etiquetas <input id="edittags" type="text" placeholder="clásicos, pendientes"></label>
+    </div>
+    <div class="frow">Estantes <div class="chips" id="editshelves"></div></div>
     <div class="modal-actions">
       <button class="btn danger" id="editdelete">Eliminar libro</button>
       <span style="flex:1"></span>
