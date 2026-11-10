@@ -6,3 +6,9 @@ dist-ssr
 .vscode/*
 !.vscode/extensions.json
 src-tauri/target
+src-tauri/gen
+
+# prototipos viejos (se conservan en disco, fuera del repo)
+ooks-prototipo.html
+prototipo/
+_to_delete/
